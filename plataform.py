@@ -44,6 +44,12 @@ character.blit(spritesheet,(-746,-9))
 character = pygame.transform.scale(character, (17*2,25*2))
 walkR4 = character
 
+character = Surface((18,27),pygame.SRCALPHA)
+character.blit(spritesheet,(-666,-8))
+character = pygame.transform.scale(character, (18*2,27*2))
+jumping = character
+
+
 
 def main():
     #global cameraX, cameraY
@@ -188,6 +194,8 @@ class Player(Entity):
         self.yvel = 0
         self.onGround = False
         self.faceR=True
+        self.counter=0
+        self.onAir= True
 
         #self.image = Surface((32,32))
         #self.image.fill(Color("#0000FF"))
@@ -218,6 +226,8 @@ class Player(Entity):
             if self.yvel > 100: self.yvel = 100
         if not(left or right):
             self.xvel = 0
+        if self.yvel < 0 or  self.yvel > 1.2 :
+            self.onAir = True
         # increment in x direction
         self.rect.left += self.xvel
         # do x-axis collisions
@@ -245,6 +255,7 @@ class Player(Entity):
                 if yvel > 0:
                     self.rect.bottom = p.rect.top
                     self.onGround = True
+                    self.onAir= False
                     self.yvel = 0
                 if yvel < 0:
                     self.rect.top = p.rect.bottom
@@ -252,10 +263,26 @@ class Player(Entity):
     def animate(self):
 
         if self.xvel > 0 or self.xvel < 0:
-            self.updatecharacter(walkR1)
+            #self.updatecharacter(walkR1)
+            self.walkloop()
+            #if not self.onGround : self.updatecharacter(jumping)
+            if  self.onAir : self.updatecharacter(jumping)
 
         else :
             self.updatecharacter(standR)
+            if  self.onAir : self.updatecharacter(jumping)
+
+    def walkloop(self):
+        if self.counter == 10:
+            self.updatecharacter(walkR1)
+        elif self.counter == 18:
+            self.updatecharacter(walkR2)
+        elif self.counter == 24:
+            self.updatecharacter(walkR4)
+       
+            
+            self.counter = 0
+        self.counter = self.counter + 1
 
 
     def updatecharacter(self,surf):
