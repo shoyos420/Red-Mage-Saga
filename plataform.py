@@ -17,6 +17,34 @@ DEPTH = 32
 FLAGS = 0
 #CAMERA_SLACK = 30
 
+spritesheet= pygame.image.load("media/graphics/Redmage.png")
+
+character = Surface((18,26),pygame.SRCALPHA)
+character.blit(spritesheet,(-835,-9))
+character = pygame.transform.scale(character, (18*3,26*2))
+standR = character
+
+character = Surface((18,26),pygame.SRCALPHA)
+character.blit(spritesheet,(-812,-9))
+character = pygame.transform.scale(character, (18*2,26*2))
+walkR1 = character
+
+character = Surface((18,26),pygame.SRCALPHA)
+character.blit(spritesheet,(-790,-9))
+character = pygame.transform.scale(character, (18*2,26*2))
+walkR2 = character
+
+character = Surface((17,25),pygame.SRCALPHA)
+character.blit(spritesheet,(-768,-9))
+character = pygame.transform.scale(character, (17*2,25*2))
+walkR3 = character
+
+character = Surface((17,25),pygame.SRCALPHA)
+character.blit(spritesheet,(-746,-9))
+character = pygame.transform.scale(character, (17*2,25*2))
+walkR4 = character
+
+
 def main():
     #global cameraX, cameraY
     pygame.init()
@@ -159,10 +187,13 @@ class Player(Entity):
         self.xvel = 0
         self.yvel = 0
         self.onGround = False
+        self.faceR=True
+
         #self.image = Surface((32,32))
         #self.image.fill(Color("#0000FF"))
         #self.image.convert()
-        self.image =  pygame.image.load("media/graphics/move.png").convert_alpha()        
+        self.image = standR
+        #self.image =  pygame.image.load("media/graphics/move.png").convert_alpha()        
         self.image = pygame.transform.scale(self.image,(32*2 ,32*2) )
         self.rect = Rect(x, y, 32*2, 32*2)
 
@@ -175,8 +206,10 @@ class Player(Entity):
         if running:
             self.xvel = 12
         if left:
+            self.faceR=False
             self.xvel = -8
         if right:
+            self.faceR=True
             self.xvel = 8
         if not self.onGround:
             # only accelerate with gravity if in the air
@@ -196,6 +229,8 @@ class Player(Entity):
         # do y-axis collisions
         self.collide(0, self.yvel, platforms)
 
+        self.animate()
+
     def collide(self, xvel, yvel, platforms):
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
@@ -213,6 +248,20 @@ class Player(Entity):
                     self.yvel = 0
                 if yvel < 0:
                     self.rect.top = p.rect.bottom
+
+    def animate(self):
+
+        if self.xvel > 0 or self.xvel < 0:
+            self.updatecharacter(walkR1)
+
+        else :
+            self.updatecharacter(standR)
+
+
+    def updatecharacter(self,surf):
+        if not self.faceR : surf = pygame.transform.flip(surf,True,False)
+        self.image= surf
+        self.image = pygame.transform.scale(self.image,(32*2 ,32*2) )
 
 
 class Platform(Entity):
