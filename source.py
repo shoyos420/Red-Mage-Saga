@@ -1,3 +1,4 @@
+
 #! /usr/bin/python
 
 import pygame
@@ -11,19 +12,20 @@ HALF_HEIGHT = int(WIN_HEIGHT / 2)
 DISPLAY = (WIN_WIDTH, WIN_HEIGHT)
 DEPTH = 32
 FLAGS = 0
-CAMERA_SLACK = 30
+#CAMERA_SLACK = 30
 
 def main():
-    global cameraX, cameraY
+    #global cameraX, cameraY
     pygame.init()
     screen = pygame.display.set_mode(DISPLAY, FLAGS, DEPTH)
     pygame.display.set_caption("Use arrows to move!")
     timer = pygame.time.Clock()
 
     up = down = left = right = running = False
-    bg = Surface((32,32))
-    bg.convert()
-    bg.fill(Color("#000000"))
+    #bg = Surface((32,32))
+    #bg.convert()
+    #bg.fill(Color("#000000"))
+    bg= Surface(DISPLAY).convert()
     entities = pygame.sprite.Group()
     player = Player(32, 32)
     platforms = []
@@ -103,10 +105,11 @@ def main():
                 left = False
 
         # draw background
-        for y in range(32):
-            for x in range(32):
-                screen.blit(bg, (x * 32, y * 32))
+        #for y in range(32):
+        #    for x in range(32):
+        #        screen.blit(bg, (x * 32, y * 32))
 
+        screen.blit(bg,(0,0))
         camera.update(player)
 
         # update player, draw everything else
@@ -153,10 +156,12 @@ class Player(Entity):
         self.xvel = 0
         self.yvel = 0
         self.onGround = False
-        self.image = Surface((32,32))
-        self.image.fill(Color("#0000FF"))
-        self.image.convert()
-        self.rect = Rect(x, y, 32, 32)
+        #self.image = Surface((32,32))
+        #self.image.fill(Color("#0000FF"))
+        #self.image.convert()
+        self.image =  pygame.image.load("media/graphics/move.png").convert_alpha()        
+        self.image = pygame.transform.scale(self.image,((40-4)*2 ,(40-4)*2) )
+        self.rect = Rect(x, y, (40-4)*2, (40-4)*2)
 
     def update(self, up, down, left, right, running, platforms):
         if up:
@@ -210,9 +215,10 @@ class Player(Entity):
 class Platform(Entity):
     def __init__(self, x, y):
         Entity.__init__(self)
-        self.image = Surface((32, 32))
-        self.image.convert()
-        self.image.fill(Color("#DDDDDD"))
+        #self.image = Surface((32, 32))
+        #self.image.convert()
+        #self.image.fill(Color("#DDDDDD"))
+        self.image =  pygame.image.load("media/graphics/grass.png").convert_alpha()
         self.rect = Rect(x, y, 32, 32)
 
     def update(self):
