@@ -4,11 +4,16 @@
 import pygame
 from pygame import *
 
+<<<<<<< HEAD
 #WIN_WIDTH = 800
 #WIN_HEIGHT = 640
 WIN_WIDTH = 507
 WIN_HEIGHT = 247
 
+=======
+WIN_WIDTH = 800
+WIN_HEIGHT = 640
+>>>>>>> 57494ec63d4f9336d9d7331a34f6a3ec0de05d1f
 HALF_WIDTH = int(WIN_WIDTH / 2)
 HALF_HEIGHT = int(WIN_HEIGHT / 2)
 
