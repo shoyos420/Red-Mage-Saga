@@ -49,60 +49,86 @@ character.blit(spritesheet,(-666,-8))
 character = pygame.transform.scale(character, (18*2,27*2))
 jumping = character
 
+ 
+pygame.mixer.init()
+sound_jump=pygame.mixer.Sound('media/sounds/jump.wav')
+pygame.mixer.music.load('media/sounds/soft.flac')
+pygame.mixer.music.play()
+pygame.mixer.music.set_volume(0.3)
+
 
 
 def main():
+    
+    
+    #global screen
     #global cameraX, cameraY
     pygame.init()
     screen = pygame.display.set_mode(DISPLAY, FLAGS, DEPTH)
     pygame.display.set_caption("Use arrows to move!")
     timer = pygame.time.Clock()
+    A_count=0
 
-    up = down = left = right = running = False
-    #bg = Surface((32,32))
+    up = down = left = right   = casting = False
+    #bg= Surface((32,32))
     #bg.convert()
     #bg.fill(Color("#000000"))
-    bg= Surface(DISPLAY).convert()
+    bg= pygame.image.load("media/graphics/bg.png").convert_alpha()
+    bg= pygame.transform.scale(bg,DISPLAY )
     entities = pygame.sprite.Group()
     player = Player(16*2, 16*2)
     platforms = []
 
     x = y = 0
     level = [
-        "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
-        "P                                          P",
-        "P                                          P",
-        "P                                          P",
-        "P                    PPPPPPPPPPP           P",
-        "P                                          P",
-        "P                                          P",
-        "P                                          P",
-        "P    PPPPPPPP                              P",
-        "P                                          P",
-        "P                          PPPPPPP         P",
-        "P                 PPPPPP                   P",
-        "P                                          P",
-        "P         PPPPPPP                          P",
-        "P                                          P",
-        "P                     PPPPPP               P",
-        "P                                          P",
-        "P   PPPPPPPPPPP                            P",
-        "P                                          P",
-        "P                 PPPPPPPPPPP              P",
-        "P                                          P",
-        "P                                          P",
-        "P                 PPPPPPPPPPP PPPPPPPPPPP  P",
-        "P                                          P",
-        "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",]
-    # build the level
+        "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN",
+        "N                                                                                                   N",
+        "N                                                                                                   N",
+        "N                                                                                                   N",
+        "N                    FFFFFFFFFFFF                                                                   N",
+        "N                                                                                                   N",
+        "N                                                                                                   N",
+        "N                                                                                                   N",
+        "N    FFFFFFFFFFFF                                                                                   N",
+        "N                                                                                                   N",
+        "N                          FFFFFF                                                                   N",
+        "N                 FFFFFF                                                                            N",
+        "N                                                                                                   N",
+        "N         FFFFFFFF                                                                                  N",
+        "N                                                                                                   N",
+        "N                     FFFFFF                                                                        N",
+        "N                                                                                                   N",
+        "N   FFFFFFFFFFFF                                                                                    N",
+        "N        A                                                   A                                       N",
+        "N                 FFFFFFFFFFFF                                                                      N",
+        "N                                                                                                   N",
+        "N                                                                                                   N",
+        "N                 FFFFFFFFFFFF FFFFFFFFFFFF                                                         N",
+        "N                                                                                                   N",
+        "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",]
+    # build thE lEvEl",]  
     for row in level:
         for col in row:
+            if col == "A":
+                A_count+=1
+                p = avisos(x, y,A_count)
+
+                platforms.append(p)
+                entities.add(p)
             if col == "P":
                 p = Platform(x, y)
                 platforms.append(p)
                 entities.add(p)
             if col == "E":
                 e = ExitBlock(x, y)
+                platforms.append(e)
+                entities.add(e)
+            if col == "N":
+                e = nones(x, y)
+                platforms.append(e)
+                entities.add(e)
+            if col == "F":
+                e = PlatformFloor(x, y)
                 platforms.append(e)
                 entities.add(e)
             x += 16*2
@@ -129,8 +155,8 @@ def main():
                 left = True
             if e.type == KEYDOWN and e.key == K_RIGHT:
                 right = True
-            if e.type == KEYDOWN and e.key == K_SPACE:
-                running = True
+            if e.type == KEYDOWN and e.key == K_z:
+                casting = True
 
             if e.type == KEYUP and e.key == K_UP:
                 up = False
@@ -140,6 +166,12 @@ def main():
                 right = False
             if e.type == KEYUP and e.key == K_LEFT:
                 left = False
+            if e.type == KEYUP and e.key == K_z:
+                casting = False
+
+            if not pygame.mixer.music.get_busy():
+                pygame.mixer.music.rewind()
+                pygame.mixer.music.play()
 
         # draw background
         #for y in range(32):
@@ -147,10 +179,11 @@ def main():
         #        screen.blit(bg, (x * 32, y * 32))
 
         screen.blit(bg,(0,0))
+        #soft_theme.play()
         camera.update(player)
 
         # update player, draw everything else
-        player.update(up, down, left, right, running, platforms)
+        player.update(up, down, left, right, casting, platforms)
         for e in entities:
             screen.blit(e.image, camera.apply(e))
 
@@ -202,17 +235,22 @@ class Player(Entity):
         #self.image.convert()
         self.image = standR
         #self.image =  pygame.image.load("media/graphics/move.png").convert_alpha()        
-        self.image = pygame.transform.scale(self.image,(32*2 ,32*2) )
+        self.image = pygame.transform.scale(self.image,(26*2 ,32*2) )
         self.rect = Rect(x, y, 32*2, 32*2)
 
-    def update(self, up, down, left, right, running, platforms):
+    def update(self, up, down, left, right, casting, platforms):
         if up:
             # only jump if on the ground
-            if self.onGround: self.yvel -= 10
+
+            if self.onGround: 
+                self.yvel -= 10
+                sound_jump.play()
         if down:
             pass
-        if running:
-            self.xvel = 12
+        if casting:
+            
+            if self.onGround: self.power()
+            
         if left:
             self.faceR=False
             self.xvel = -8
@@ -241,6 +279,13 @@ class Player(Entity):
 
         self.animate()
 
+    def power(self):
+        bg= pygame.image.load("media/graphics/bg2.png").convert_alpha()
+        bg= pygame.transform.scale(bg,DISPLAY )
+        
+
+        print("hola")
+
     def collide(self, xvel, yvel, platforms):
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
@@ -264,7 +309,8 @@ class Player(Entity):
 
         if self.xvel > 0 or self.xvel < 0:
             #self.updatecharacter(walkR1)
-            self.walkloop()
+            walk=(walkR1, walkR2, walkR4)
+            self.animateloop(walk)
             #if not self.onGround : self.updatecharacter(jumping)
             if  self.onAir : self.updatecharacter(jumping)
 
@@ -272,13 +318,13 @@ class Player(Entity):
             self.updatecharacter(standR)
             if  self.onAir : self.updatecharacter(jumping)
 
-    def walkloop(self):
+    def animateloop(self,vect):
         if self.counter == 10:
-            self.updatecharacter(walkR1)
+            self.updatecharacter(vect[0])
         elif self.counter == 18:
-            self.updatecharacter(walkR2)
+            self.updatecharacter(vect[1])
         elif self.counter == 24:
-            self.updatecharacter(walkR4)
+            self.updatecharacter(vect[2])
        
             
             self.counter = 0
@@ -288,7 +334,7 @@ class Player(Entity):
     def updatecharacter(self,surf):
         if not self.faceR : surf = pygame.transform.flip(surf,True,False)
         self.image= surf
-        self.image = pygame.transform.scale(self.image,(32*2 ,32*2) )
+        self.image = pygame.transform.scale(self.image,(26*2 ,32*2) )
 
 
 class Platform(Entity):
@@ -303,6 +349,42 @@ class Platform(Entity):
 
     def update(self):
         pass
+
+class PlatformFloor(Entity):
+    def __init__(self, x, y):
+        Entity.__init__(self)
+        #self.image = Surface((32, 32))
+        #self.image.convert()
+        #self.image.fill(Color("#DDDDDD"))
+        self.image =  pygame.image.load("media/graphics/grass.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image,(16*2 ,16*2) )
+        self.rect = Rect(x, y, 16*2, 16*2)
+
+    def update(self):
+        pass
+
+class nones(Entity):
+    def __init__(self, x, y):
+        Entity.__init__(self)
+        self.image = Surface((32, 32))
+        self.image =  pygame.image.load("media/graphics/trans.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image,(16*2 ,16*2) )
+        self.rect = Rect(x, y, 16*2, 16*2)
+
+    def update(self):
+        pass
+
+class avisos(Entity):
+    def __init__(self, x, y, A_count):
+        Entity.__init__(self)
+        self.image = Surface((70, 50))
+        self.image =  pygame.image.load("media/graphics/aviso"+str(A_count)+".png").convert_alpha()
+        self.image = pygame.transform.scale(self.image,(110 ,90) )
+        self.rect = Rect(x, y, 16*2, 16*2)
+
+    def update(self):
+        pass
+
 
 class ExitBlock(Platform):
     def __init__(self, x, y):
