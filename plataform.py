@@ -49,12 +49,60 @@ character.blit(spritesheet,(-666,-8))
 character = pygame.transform.scale(character, (18*2,27*2))
 jumping = character
 
+character = Surface((18,24),pygame.SRCALPHA)
+character.blit(spritesheet,(-190,-12))
+character = pygame.transform.scale(character, (18*2,24*2))
+getdown = character
+
+character = Surface((20,25),pygame.SRCALPHA)
+character.blit(spritesheet,(-162,-83))
+character = pygame.transform.scale(character, (20*2,25*2))
+hands = character
+
+character = Surface((16,18),pygame.SRCALPHA)
+character.blit(spritesheet,(-296,-331))
+character = pygame.transform.scale(character, (16*2,18*2))
+sword = character
+
+character = Surface((18,26),pygame.SRCALPHA)
+character.blit(spritesheet,(-767,-9))
+character = pygame.transform.scale(character, (18*2,26*2))
+swordmove1 = character
+
+character = Surface((19,26),pygame.SRCALPHA)
+character.blit(spritesheet,(-743,-9))
+character = pygame.transform.scale(character, (19*2,26*2))
+swordmove2 = character
+
+character = Surface((5,9),pygame.SRCALPHA)
+character.blit(spritesheet,(-530,-339))
+character = pygame.transform.scale(character, (5*2,9*2))
+sword1 = character
+
+character = Surface((5,22),pygame.SRCALPHA)
+character.blit(spritesheet,(-541,-326))
+character = pygame.transform.scale(character, (5*2,22*2))
+sword2 = character
+
+character = Surface((9,22),pygame.SRCALPHA)
+character.blit(spritesheet,(-553,-326))
+character = pygame.transform.scale(character, (9*2,22*2))
+sword3 = character
+
+character = Surface((18,22),pygame.SRCALPHA)
+character.blit(spritesheet,(-564,-326))
+character = pygame.transform.scale(character, (18*2,22*2))
+sword4 = character
+
+
  
 pygame.mixer.init()
 sound_jump=pygame.mixer.Sound('media/sounds/jump.wav')
 pygame.mixer.music.load('media/sounds/soft.flac')
 pygame.mixer.music.play()
 pygame.mixer.music.set_volume(0.3)
+
+
 
 
 
@@ -68,16 +116,18 @@ def main():
     pygame.display.set_caption("Use arrows to move!")
     timer = pygame.time.Clock()
     A_count=0
+    atack_counter=0
 
-    up = down = left = right   = casting = False
+    up = down = left = right  =atack = casting = False
     #bg= Surface((32,32))
     #bg.convert()
     #bg.fill(Color("#000000"))
     bg= pygame.image.load("media/graphics/bg.png").convert_alpha()
     bg= pygame.transform.scale(bg,DISPLAY )
     entities = pygame.sprite.Group()
-    player = Player(16*2, 16*2)
+    player = Player(16*2, 16*2+690)
     platforms = []
+    sw= Sword(16,16)
 
     x = y = 0
     level = [
@@ -147,6 +197,7 @@ def main():
     total_level_height = len(level)*16*2
     camera = Camera(complex_camera, total_level_width, total_level_height)
     entities.add(player)
+    entities.add(sw)
 
     while 1:
         timer.tick(60)
@@ -165,6 +216,8 @@ def main():
                 right = True
             if e.type == KEYDOWN and e.key == K_z:
                 casting = True
+            if e.type == KEYDOWN and e.key == K_x:
+                atack = True
 
             if e.type == KEYUP and e.key == K_UP:
                 up = False
@@ -176,6 +229,9 @@ def main():
                 left = False
             if e.type == KEYUP and e.key == K_z:
                 casting = False
+            if atack_counter>10:
+                atack = False
+                atack_counter=0
 
             if not pygame.mixer.music.get_busy():
                 pygame.mixer.music.rewind()
@@ -190,12 +246,15 @@ def main():
         #soft_theme.play()
         camera.update(player)
 
+
         # update player, draw everything else
-        player.update(up, down, left, right, casting, platforms)
+        player.update(up, down, left, right, casting,atack, platforms)
+        sw.update(atack,right,left)
         for e in entities:
             screen.blit(e.image, camera.apply(e))
 
         pygame.display.update()
+        atack_counter+=1
 
 class Camera(object):
     def __init__(self, camera_func, width, height):
@@ -228,6 +287,42 @@ class Entity(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
+class Sword(Entity):
+    def __init__(self, x, y):
+        Entity.__init__(self)
+        self.faceR = True
+        self.image = sword1
+        self.counter= 0
+        self.rect = Rect(x, y, 32*2, 32*2)
+
+    def update(self,atack,rigth,left):
+        
+
+        if rigth:
+            self.faceR=True
+
+        if left: 
+            self.faceR=True
+
+        if atack:
+            if self.counter == 10:
+                self.updatecharacter(sword1)
+            elif self.counter == 18:
+                self.updatecharacter(sword2)
+            elif self.counter == 24:
+                self.updatecharacter(sword3)
+       
+            
+            self.counter = 0
+        self.counter = self.counter + 1
+
+    def updatecharacter(self,surf):
+        if not self.faceR : surf = pygame.transform.flip(surf,True,False)
+        self.image= surf
+        self.image = pygame.transform.scale(self.image,(26*2 ,32*2) )
+
+
+
 class Player(Entity):
     def __init__(self, x, y):
         Entity.__init__(self)
@@ -237,6 +332,8 @@ class Player(Entity):
         self.faceR=True
         self.counter=0
         self.onAir= True
+        self.down=False
+        self.atack=False
 
         #self.image = Surface((32,32))
         #self.image.fill(Color("#0000FF"))
@@ -246,7 +343,7 @@ class Player(Entity):
         self.image = pygame.transform.scale(self.image,(26*2 ,32*2) )
         self.rect = Rect(x, y, 32*2, 32*2)
 
-    def update(self, up, down, left, right, casting, platforms):
+    def update(self, up, down, left, right, casting, atack,platforms):
         if up:
             # only jump if on the ground
 
@@ -254,11 +351,12 @@ class Player(Entity):
                 self.yvel -= 10
                 sound_jump.play()
         if down:
-            pass
+            self.down=True
         if casting:
             
             if self.onGround: self.power()
-            
+        if atack:
+            self.atack=True   
         if left:
             self.faceR=False
             self.xvel = -8
@@ -274,6 +372,10 @@ class Player(Entity):
             self.xvel = 0
         if self.yvel < 0 or  self.yvel > 1.2 :
             self.onAir = True
+        if not down :
+            self.down=False
+        if not atack:
+            self.atack=False
         # increment in x direction
         self.rect.left += self.xvel
         # do x-axis collisions
@@ -315,13 +417,23 @@ class Player(Entity):
 
     def animate(self):
 
-        if self.xvel > 0 or self.xvel < 0:
+        if self.atack and not self.onAir:
+            swordAtack=(swordmove1,swordmove2,swordmove2)
+            self.animateloop(swordAtack)
+
+        elif self.xvel > 0 or self.xvel < 0:
             #self.updatecharacter(walkR1)
             walk=(walkR1, walkR2, walkR4)
             self.animateloop(walk)
             #if not self.onGround : self.updatecharacter(jumping)
             if  self.onAir : self.updatecharacter(jumping)
 
+        
+
+           
+        elif self.down==True :
+            self.updatecharacter(getdown)
+            if  self.onAir : self.updatecharacter(jumping)
         else :
             self.updatecharacter(standR)
             if  self.onAir : self.updatecharacter(jumping)
@@ -385,7 +497,7 @@ class nones(Entity):
 class avisos(Entity):
     def __init__(self, x, y, A_count):
         Entity.__init__(self)
-        self.image = Surface((1, 1))
+        self.image = Surface((0,0))
         self.image =  pygame.image.load("media/graphics/aviso"+str(A_count)+".png").convert_alpha()
         self.image = pygame.transform.scale(self.image,(110 ,90) )
         self.rect = Rect(x, y, 1, 1)
