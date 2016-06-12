@@ -3,6 +3,8 @@
 
 import pygame
 from pygame import *
+import lvl , listPlataforms
+from listPlataforms import *
 
 #WIN_WIDTH = 800
 #WIN_HEIGHT = 640
@@ -98,17 +100,17 @@ sword4 = character
  
 pygame.mixer.init()
 sound_jump=pygame.mixer.Sound('media/sounds/jump.wav')
-pygame.mixer.music.load('media/sounds/soft.flac')
-pygame.mixer.music.play()
-pygame.mixer.music.set_volume(0.3)
+
+
 
 
 
 
 
 def main():
-    
-    
+    pygame.mixer.music.load('media/sounds/soft.flac')
+    pygame.mixer.music.play()
+    pygame.mixer.music.set_volume(0.3)
     #global screen
     #global cameraX, cameraY
     pygame.init()
@@ -130,32 +132,7 @@ def main():
     sw= Sword(16,16)
 
     x = y = 0
-    level = [
-        "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN",
-        "N                                                                                                   N",
-        "N                                                                                                   N",
-        "N                                                                                                   N",
-        "N                    BFFFFFFFFFFC                                                                   N",
-        "N                                                                                                   N",
-        "N                                                                                                   N",
-        "N                                                                                                   N",
-        "N    BFFFFFFFFFFFC                                                                                  N",
-        "N                                                                                                   N",
-        "N                          BFFFFFFC                                                                 N",
-        "N                 BFFFFFFC                                                                          N",
-        "N                                                                                                   N",
-        "N         BFFFFFFFC                                                                                 N",
-        "N                                                                                                   N",
-        "N                     BFFFFFFC                                                                      N",
-        "N                                                                                                   N",
-        "N   BFFFFFFFFFFC                                                                                    N",
-        "N        A                                                   A                                      N",
-        "N                 BFFFFFFFFFFC                                                                      N",
-        "N                                                                                                   N",
-        "N                                                                                                   N",
-        "N                 BFFFFFFFFFFC BFFFFFFFFFFC                                                         N",
-        "N                                                                                                   N",
-        "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",]
+    level=lvl.level(2)
     # build thE lEvEl",]  
     for row in level:
         for col in row:
@@ -283,9 +260,7 @@ def complex_camera(camera, target_rect):
     t = min(0, t)                           # stop scrolling at the top
     return Rect(l, t, w, h)
 
-class Entity(pygame.sprite.Sprite):
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
+
 
 class Sword(Entity):
     def __init__(self, x, y):
@@ -457,84 +432,7 @@ class Player(Entity):
         self.image = pygame.transform.scale(self.image,(26*2 ,32*2) )
 
 
-class Platform(Entity):
-    def __init__(self, x, y):
-        Entity.__init__(self)
-        #self.image = Surface((32, 32))
-        #self.image.convert()
-        #self.image.fill(Color("#DDDDDD"))
-        self.image =  pygame.image.load("media/graphics/grass.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image,(16*2 ,16*2) )
-        self.rect = Rect(x, y, 16*2, 16*2)
 
-    def update(self):
-        pass
-
-class PlatformFloor(Entity):
-    def __init__(self, x, y):
-        Entity.__init__(self)
-        #self.image = Surface((32, 32))
-        #self.image.convert()
-        #self.image.fill(Color("#DDDDDD"))
-        self.image =  pygame.image.load("media/graphics/grass.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image,(16*2 ,16*2) )
-        self.rect = Rect(x, y, 16*2, 16*2)
-
-    def update(self):
-        pass
-
-class nones(Entity):
-    def __init__(self, x, y):
-        Entity.__init__(self)
-        self.image = Surface((32, 32))
-        self.image =  pygame.image.load("media/graphics/trans.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image,(16*2 ,16*2) )
-        self.rect = Rect(x, y, 16*2, 16*2)
-
-    def update(self):
-        pass
-
-class avisos(Entity):
-    def __init__(self, x, y, A_count):
-        Entity.__init__(self)
-        self.image = Surface((0,0))
-        self.image =  pygame.image.load("media/graphics/aviso"+str(A_count)+".png").convert_alpha()
-        self.image = pygame.transform.scale(self.image,(110 ,90) )
-        self.rect = Rect(x, y, 1, 1)
-
-    def update(self):
-        pass
-
-
-class PlatformB(Entity):
-    def __init__(self, x, y):
-        Entity.__init__(self)
-        #self.image = Surface((32, 32))
-        #self.image.convert()
-        #self.image.fill(Color("#DDDDDD"))
-        self.image =  pygame.image.load("media/graphics/grassB.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image,(16*2 ,16*2) )
-        self.rect = Rect(x, y, 16*2, 16*2)
-
-    def update(self):
-        pass
-class PlatformC(Entity):
-    def __init__(self, x, y):
-        Entity.__init__(self)
-        #self.image = Surface((32, 32))
-        #self.image.convert()
-        #self.image.fill(Color("#DDDDDD"))
-        self.image =  pygame.image.load("media/graphics/grassC.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image,(16*2 ,16*2) )
-        self.rect = Rect(x, y, 16*2, 16*2)
-
-    def update(self):
-        pass
-
-class ExitBlock(Platform):
-    def __init__(self, x, y):
-        Platform.__init__(self, x, y)
-        self.image.fill(Color("#0033FF"))
 
 if __name__ == "__main__":
     main()
