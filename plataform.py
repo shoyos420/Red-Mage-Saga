@@ -5,6 +5,7 @@ import pygame
 from pygame import *
 import lvl , listPlataforms
 from listPlataforms import *
+from lvl import *
 
 #WIN_WIDTH = 800
 #WIN_HEIGHT = 640
@@ -100,7 +101,7 @@ sword4 = character
  
 pygame.mixer.init()
 sound_jump=pygame.mixer.Sound('media/sounds/jump.wav')
-
+sound_portal=pygame.mixer.Sound('media/sounds/portal.wav')
 
 
 
@@ -119,6 +120,7 @@ def main():
     timer = pygame.time.Clock()
     A_count=0
     atack_counter=0
+    nivel=1
 
     up = down = left = right  =atack = casting = False
     #bg= Surface((32,32))
@@ -126,49 +128,18 @@ def main():
     #bg.fill(Color("#000000"))
     bg= pygame.image.load("media/graphics/bg.png").convert_alpha()
     bg= pygame.transform.scale(bg,DISPLAY )
-    entities = pygame.sprite.Group()
+    
     player = Player(16*2, 16*2+690)
-    platforms = []
+    
     sw= Sword(16,16)
 
-    x = y = 0
-    level=lvl.level(2)
+    
+    level=lvl.level(nivel)
+    platforms=constructor(level,A_count)[0]
+    entities=constructor(level,A_count)[1]
+    A_count=constructor(level,A_count)[2]
     # build thE lEvEl",]  
-    for row in level:
-        for col in row:
-            if col == "A":
-                A_count+=1
-                p = avisos(x, y,A_count)
-
-                platforms.append(p)
-                entities.add(p)
-            if col == "P":
-                p = Platform(x, y)
-                platforms.append(p)
-                entities.add(p)
-            if col == "E":
-                e = ExitBlock(x, y)
-                platforms.append(e)
-                entities.add(e)
-            if col == "N":
-                e = nones(x, y)
-                platforms.append(e)
-                entities.add(e)
-            if col == "F":
-                e = PlatformFloor(x, y)
-                platforms.append(e)
-                entities.add(e)
-            if col == "B":
-                e = PlatformB(x, y)
-                platforms.append(e)
-                entities.add(e)
-            if col == "C":
-                e = PlatformC(x, y)
-                platforms.append(e)
-                entities.add(e)
-            x += 16*2
-        y += 16*2
-        x = 0
+    
 
     total_level_width  = len(level[0])*16*2
     total_level_height = len(level)*16*2
@@ -195,6 +166,11 @@ def main():
                 casting = True
             if e.type == KEYDOWN and e.key == K_x:
                 atack = True
+            if e.type == KEYDOWN and e.key == K_m:
+                while(aux):
+                    pygame.time.wait(.001)
+                    if e.type == KEYDOWN and e.key == K_m:
+                        aux=0
 
             if e.type == KEYUP and e.key == K_UP:
                 up = False
@@ -227,8 +203,28 @@ def main():
         # update player, draw everything else
         player.update(up, down, left, right, casting,atack, platforms)
         sw.update(atack,right,left)
+        
+        if player.salida == True :
+            pygame.time.wait(1)
+            sound_portal.play()
+            nivel+=1
+            level=lvl.level(nivel)
+            platforms=constructor(level,A_count)[0]
+            entities=constructor(level,A_count)[1]
+            salida=constructor(level,A_count)[2]
+            player.salida=False
+            # build thE lEvEl",]  
+            
+
+            total_level_width  = len(level[0])*16*2
+            total_level_height = len(level)*16*2
+            camera = Camera(complex_camera, total_level_width, total_level_height)
+            entities.add(player)
+            entities.add(sw)  
         for e in entities:
             screen.blit(e.image, camera.apply(e))
+
+
 
         pygame.display.update()
         atack_counter+=1
@@ -309,6 +305,9 @@ class Player(Entity):
         self.onAir= True
         self.down=False
         self.atack=False
+        self.pos=(x,y)
+        self.salida=False
+        
 
         #self.image = Surface((32,32))
         #self.image.fill(Color("#0000FF"))
@@ -375,7 +374,7 @@ class Player(Entity):
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
                 if isinstance(p, ExitBlock):
-                    pygame.event.post(pygame.event.Event(QUIT))
+                    self.salida=True
                 if xvel > 0:
                     self.rect.right = p.rect.left
                     print "collide right"

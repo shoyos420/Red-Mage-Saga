@@ -82,4 +82,13 @@ class PlatformC(Entity):
 class ExitBlock(Platform):
     def __init__(self, x, y):
         Platform.__init__(self, x, y)
-        self.image.fill(Color("#0033FF"))
+        self.image =  pygame.image.load("media/graphics/Portal.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image,(24*2 ,32*2) )
+        self.rect = Rect(x, y, 16*2, 16*2)
+
+class ExitBlock2(Platform):
+    def __init__(self, x, y):
+        Platform.__init__(self, x, y)
+        self.image =  pygame.image.load("media/graphics/Portal.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image,(24*2 ,32*2) )
+        self.rect = Rect(x, y, 16*2, 16*2)
