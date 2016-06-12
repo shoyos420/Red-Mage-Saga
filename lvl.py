@@ -11,7 +11,7 @@ def level(num):
         "N                                                                                                   N",
         "N                                                                                             E     N",
         "N                    BFFFFFFFFFFC                                                          BC       N",
-        "N                                                                                     BFC     F     N",
+        "N                                                                                     BFC     FC    N",
         "N                                                                                BFC                N",
         "N                                                                                                   N",
         "N    BFFFFFFFFFFFC                                                        BFFC                      N",
@@ -86,7 +86,7 @@ def level(num):
         "N                                                                                                   N",
         "N                                                                                                   N",
         "N                                                                                                   N",
-        "N                                                                                               U   N",
+        "N                                                                                              U    N",
         "N                                                                                                   N",
         "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",]
 

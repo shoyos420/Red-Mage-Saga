@@ -15,7 +15,7 @@ FLAGS = 0
 
 #Spritesheet
 
-spritesheet = pygame.image.load("media/graphics/Redmage.png")
+spritesheet = pygame.image.load("media/graphics/ice.png")
 
 #Main Function
 

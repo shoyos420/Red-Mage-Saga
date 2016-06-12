@@ -65,7 +65,7 @@ def main():
     pantalla = pygame.display.set_mode(tam)
     pygame.display.set_caption("Ejemplo de menu")
     menu=Menu()
-    opciones=['Nuevo', 'Continuar', 'Salir']
+    opciones=['Nuevo', 'Tutorial', 'Salir']
     menu.opciones=opciones
     fin=False
     reloj = pygame.time.Clock()
@@ -93,8 +93,11 @@ def main():
             menu.seleccion=0
             fin=True
         elif menu.seleccion==1:
-            plataform.main()
-        
+            plataform.main(2)
+        elif menu.seleccion==2:
+            plataform.main(1)
+
+
         reloj.tick(60)
         menu.draw(pantalla)
         pygame.display.flip()
