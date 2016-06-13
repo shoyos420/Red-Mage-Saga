@@ -37,7 +37,7 @@ def main(aux):
     #global cameraX, cameraY
     pygame.init()
     screen = pygame.display.set_mode(DISPLAY, FLAGS, DEPTH)
-    pygame.display.set_caption("Use arrows to move!")
+    pygame.display.set_caption("RED MAGE!!")
     timer = pygame.time.Clock()
     A_count=0
     atack_counter=0
@@ -364,8 +364,9 @@ class Player(Entity):
                 else : 
                     self.vidas-=1 
                     self.updatecharacter(getdown)
-
-                    self.rect.left-=100
+                    if self.faceR:
+                        self.rect.left+=10
+                    else: self.rect.left-=10
 
     def animate(self):
 

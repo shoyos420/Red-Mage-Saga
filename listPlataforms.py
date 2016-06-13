@@ -7,6 +7,7 @@ firesheet=pygame.image.load("media/graphics/fire.png")
 thundersheet=pygame.image.load("media/graphics/thunder.png")
 icesheet=pygame.image.load("media/graphics/ice.png")
 trans=pygame.image.load("media/graphics/trans.png")
+wallpaper=pygame.image.load("media/graphics/wallpaper.jpg")
 
 character = Surface((18,26),pygame.SRCALPHA)
 character.blit(spritesheet,(-835,-9))
@@ -150,6 +151,7 @@ bombf3 = character
 pygame.mixer.init()
 sound_jump=pygame.mixer.Sound('media/sounds/jump.wav')
 sound_portal=pygame.mixer.Sound('media/sounds/portal.wav')
+sound_option=pygame.mixer.Sound('media/sounds/option.wav')
 
 
 
@@ -225,6 +227,31 @@ class PlatformC(Entity):
         #self.image.convert()
         #self.image.fill(Color("#DDDDDD"))
         self.image =  pygame.image.load("media/graphics/grassC.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image,(16*2 ,16*2) )
+        self.rect = Rect(x, y, 16*2, 16*2)
+
+    def update(self):
+        pass
+
+class PlatformW(Entity):
+    def __init__(self, x, y):
+        Entity.__init__(self)
+        #self.image = Surface((32, 32))
+        #self.image.convert()
+        #self.image.fill(Color("#DDDDDD"))
+        self.image =  pygame.image.load("media/graphics/wood.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image,(16*2 ,16*2) )
+        self.rect = Rect(x, y, 16*2, 16*2)
+
+    def update(self):
+        pass
+class PlatformS(Entity):
+    def __init__(self, x, y):
+        Entity.__init__(self)
+        #self.image = Surface((32, 32))
+        #self.image.convert()
+        #self.image.fill(Color("#DDDDDD"))
+        self.image =  pygame.image.load("media/graphics/stone.png").convert_alpha()
         self.image = pygame.transform.scale(self.image,(16*2 ,16*2) )
         self.rect = Rect(x, y, 16*2, 16*2)
 
