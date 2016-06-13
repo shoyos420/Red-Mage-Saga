@@ -1,6 +1,20 @@
 import pygame
 from pygame import *
 
+'''
+lista de todos los objetos que utilizamos, clases ajenas al jugador
+canciones y posiciones en las hojas de sprites, todo lo relacionado 
+a esto se encuentra en esta hoja, su funcionamiento no es mas que una lista
+de objetos.
+
+
+
+
+
+
+
+'''
+
 bombsheet= pygame.image.load("media/graphics/bombsheet.png")
 spritesheet= pygame.image.load("media/graphics/Redmage.png")
 firesheet=pygame.image.load("media/graphics/fire.png")
@@ -144,6 +158,55 @@ character.blit(bombsheet,(-105,-1))
 character = pygame.transform.scale(character, (26*2,38*2))
 bombf3 = character
 
+character = Surface((26,29),pygame.SRCALPHA)
+character.blit(bombsheet,(-9,-266))
+character = pygame.transform.scale(character, (26*2,29*2))
+bombd1 = character
+
+character = Surface((26,29),pygame.SRCALPHA)
+character.blit(bombsheet,(-57,-266))
+character = pygame.transform.scale(character, (26*2,29*2))
+bombd2 = character
+
+character = Surface((26,29),pygame.SRCALPHA)
+character.blit(bombsheet,(-107,-266))
+character = pygame.transform.scale(character, (26*2,29*2))
+bombd3 = character
+
+character = Surface((27,28),pygame.SRCALPHA)
+character.blit(bombsheet,(-279,-263))
+character = pygame.transform.scale(character, (27*2,28*2))
+bombg1 = character
+
+character = Surface((27,28),pygame.SRCALPHA)
+character.blit(bombsheet,(-279,-263))
+character = pygame.transform.scale(character, (27*2,28*2))
+bombg1 = character
+
+character = Surface((27,30),pygame.SRCALPHA)
+character.blit(bombsheet,(-327,-262))
+character = pygame.transform.scale(character, (27*2,30*2))
+bombg2 = character
+
+character = Surface((30,31),pygame.SRCALPHA)
+character.blit(bombsheet,(-373,-262))
+character = pygame.transform.scale(character, (30*2,31*2))
+bombg3 = character
+
+character = Surface((26,29),pygame.SRCALPHA)
+character.blit(bombsheet,(-280,-6))
+character = pygame.transform.scale(character, (26*2,29*2))
+bombb1 = character
+
+character = Surface((28,29),pygame.SRCALPHA)
+character.blit(bombsheet,(-327,-6))
+character = pygame.transform.scale(character, (28*2,29*2))
+bombb2 = character
+
+character = Surface((30,30),pygame.SRCALPHA)
+character.blit(bombsheet,(-376,-6))
+character = pygame.transform.scale(character, (30*2,30*2))
+bombb3 = character
 
 
 
@@ -322,12 +385,18 @@ class Element(Entity):
                         self.xvel=0
                     
 class Enemy(Entity):
-    def __init__(self, x, y):
+    def __init__(self, x, y,rand):
         Entity.__init__(self)
         self.xvel = 3
         self.yvel = 0
         self.faceR=True
-        self.image = bombf1
+        if rand == 1:
+            self.image = bombf1
+        if rand == 2:
+            self.image = bombg1
+        if rand == 3:
+            self.image = bombb1
+        self.color=rand
         self.image = pygame.transform.scale(self.image,(32*2 ,32*2) )
         self.rect = Rect(x, y, 32*2, 32*2)
         self.counter=0
@@ -369,7 +438,12 @@ class Enemy(Entity):
 
     def animate(self):
 
-        walk=(bombf1,bombf2,bombf3)
+        if self.color == 1:
+            walk=(bombf1,bombf2,bombf3) 
+        if self.color == 2:
+            walk=(bombg1,bombg2,bombg3)
+        if self.color == 3:
+            walk=(bombb1,bombb2,bombb3)
         self.animateloop(walk)
         
 
@@ -392,3 +466,79 @@ class Enemy(Entity):
         if not self.faceR : surf = pygame.transform.flip(surf,True,False)
         self.image= surf
         self.image = pygame.transform.scale(self.image,(26*2 ,32*2) )
+
+
+
+class Boss(Entity):
+    def __init__(self, x, y):
+        Entity.__init__(self)
+        self.xvel = 3
+        self.yvel = 0
+        self.faceR=True
+        self.image = bombf1
+        self.image = pygame.transform.scale(self.image,(32*8 ,32*8) )
+        self.rect = Rect(x, y, 32*8, 32*8)
+        self.counter=0
+        self.now=x
+        self.die=False
+        self.done=False
+        self.vida=1000
+
+    def update(self,platforms,course,shoots):
+        # increment in x direction
+        if self.rect.left <  course[1]+1000 and self.faceR  : 
+            self.rect.left += self.xvel
+        elif self.rect.left >  course[0]:
+            self.faceR=False
+            self.rect.left -= self.xvel
+        else : self.faceR=True
+        
+        # do x-axis collisions
+        #self.collide(self.xvel, 0, platforms)
+        # increment in y direction
+        #self.rect.top += sin(self.xvel)
+        # assuming we're in the air
+        
+        # do y-axis collisions
+        #self.collide(0, self.yvel, platforms)
+        
+        self.collide(shoots)
+        if not self.die:
+            self.animate()
+         
+    def collide(self, shoots):
+        for p in shoots:
+            if pygame.sprite.collide_rect(self, p):
+                self.updatecharacter(fire3)
+                if self.vida==0:
+                    self.die=True
+                self.vida-=1
+
+                
+               
+
+    def animate(self):
+
+        walk=(bombf1,bombf2,bombf3)
+        self.animateloop(walk)
+        
+
+
+    def animateloop(self,vect):
+        if self.counter == 15:
+            self.updatecharacter(vect[0])
+        elif self.counter == 25:
+            self.updatecharacter(vect[1])
+        elif self.counter == 40:
+            self.updatecharacter(vect[2])
+            
+                
+            
+            self.counter = 0
+        self.counter = self.counter + 1
+
+
+    def updatecharacter(self,surf):
+        if not self.faceR : surf = pygame.transform.flip(surf,True,False)
+        self.image= surf
+        self.image = pygame.transform.scale(self.image,(32*8 ,32*8) )

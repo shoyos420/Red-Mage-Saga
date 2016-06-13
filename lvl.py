@@ -3,6 +3,24 @@ from plataform import *
 from listPlataforms import *
 
 
+
+'''
+programa encargado de el disenioo de los niveles
+
+por caracteres se encarga de diseniar e interpretar 
+los disenios del juego, muy util a la hora de hacer pequenios
+cambios en el nivel
+
+foncion constructor lee y genera los tipos de objetos utilizados en el 
+juego
+
+
+
+
+
+
+'''
+
 def level(num):
 	if num == 1:
 		level = [
@@ -24,11 +42,11 @@ def level(num):
         "N                                                                                                   N",
         "N                                                                                                   N",
         "N                                                                              BFFFFFFC             N",
-        "N          A                  A                                A                                     N",
+        "N          A                  A                                A                                    N",
         "N                                                                      BFFFFFC                      N",
         "N                                                                                                   N",
         "N                                                                                                   N",
-        "N                                              H                                                     N",
+        "N                                              H                                                    N",
         "N                                                                                                   N",
         "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",]
 
@@ -103,7 +121,7 @@ def level(num):
         "N                                                                                                   N",
         "N                                                                                                   N",
         "N                                                                                                   N",
-        "N                                                                                                   N",
+        "N                       V                                              V                            N",
         "N                                                                                                   N",
         "N                                                                                                   N",
         "N                                                                                                   N",
@@ -129,6 +147,7 @@ def constructor(level,aux):
         entities = pygame.sprite.Group()
         enemies = pygame.sprite.Group()
         platforms = []
+        colorcount=1
         
         x = y = 0
         for row in level:
@@ -168,8 +187,11 @@ def constructor(level,aux):
                         platforms.append(e)
                         entities.add(e)
                     if col == "H":
-                        e = Enemy(x, y)
+                        e = Enemy(x, y,colorcount)
                         enemies.add(e)
+                        colorcount+=1
+                        if colorcount ==4:
+                            colorcount=1
                     if col == "W":
                         e = PlatformW(x, y)
                         platforms.append(e)
@@ -177,7 +199,11 @@ def constructor(level,aux):
                     if col == "S":
                         e = PlatformS(x, y)
                         platforms.append(e)
-                        entities.add(e)    
+                        entities.add(e)  
+                    if col == "V":
+                        e = Boss(x, y)
+                        
+                        enemies.add(e)  
                     x += 16*2
                 y += 16*2
                 x = 0

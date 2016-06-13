@@ -24,9 +24,14 @@ FLAGS = 0
 
 
 
+'''
+deficinion principal de la plataforma
+la ejecucion y interpretacion de listPlataforms.py
+menu.py y lvl.py se encuentra aqui.
 
 
 
+'''
 
 
 

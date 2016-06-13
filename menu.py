@@ -3,7 +3,25 @@ from listPlataforms import *
 import sys
 import plataform
 
-# Constantes
+
+'''
+
+clase menu
+
+todo lo referente al trabajo del menu y la pausa se trabaja aqui
+pequenas modificaciones con un codigo muy a la medida como el 
+profesor nos paso.
+
+falta por implementar el cambio de mandos****
+
+
+'''
+
+
+
+
+
+
 
 # Colores
 NEGRO   = (   0,   0,   0)
@@ -17,6 +35,7 @@ ANCHO  = 507*2
 ALTO = 247*2
 
 
+#definicion menu
 class Menu():
 
     color=NEGRO
@@ -43,7 +62,7 @@ class Menu():
         if self.nop <= 0:
             self.nop=len(self.opciones)
 
-
+    #dibuja en la pantalla las opciones
     def draw(self, pantalla):
         self.texto=self.fuente.render('Menu',True,self.color)
         pantalla.blit(self.texto, self.pos_titulo)
@@ -59,6 +78,7 @@ class Menu():
                 pygame.draw.circle(pantalla, self.fondo, pos, 5, 0)
             i+=1
 
+#funcion pausa utilizada en plataform.py
 def pausa(pantalla):
     pygame.mixer.music.pause()
     pantalla1 = pantalla
@@ -109,6 +129,8 @@ def pausa(pantalla):
         menu.draw(pantalla)
         pygame.display.flip()
 
+
+#menu principal
 def main():
     """ Programa principal """
     pygame.mixer.music.load('media/sounds/prologue.mp3')
