@@ -24,7 +24,7 @@ def level(num):
         "N                     BFFFFFFC                                                                      N",
         "N                                                                                                   N",
         "N   BFFFFFFFFFFC                                                               BFFFFFFC             N",
-        "N        A                                                   A                                      N",
+        "N          A                                                  A                                     N",
         "N                 BFFFFFFFFFFC                                        BFFFFFFC                      N",
         "N                                                                                                   N",
         "N                                                                                                   N",
@@ -82,7 +82,7 @@ def level(num):
         "N                                                                                                   N",
         "N                                                                                                   N",
         "N                                                                                                   N",
-        "N                                                                                                   N",
+        "N                                                            BFFFFFFFFFFFFFFC                       N",
         "N                                                                                                   N",
         "N                                                                                                   N",
         "N                                                                                                   N",
@@ -125,18 +125,20 @@ def level(num):
 
 
 def constructor(level,aux):
-        A_count=aux
+        count=aux
         entities = pygame.sprite.Group()
+        enemies = pygame.sprite.Group()
         platforms = []
+        
         x = y = 0
         for row in level:
                 for col in row:
                     if col == "A":
-                        A_count+=1
-                        p = avisos(x, y,A_count)
+                        count+=1
+                        p = avisos(x, y,count)
 
                         platforms.append(p)
-                        entities.add(p)
+                        
                     if col == "P":
                         p = Platform(x, y)
                         platforms.append(p)
@@ -165,8 +167,12 @@ def constructor(level,aux):
                         e = ExitBlock2(x, y)
                         platforms.append(e)
                         entities.add(e)
+                    if col == "H":
+                        e = Enemy(x, y)
+                        enemies.add(e)
+                        
                     x += 16*2
                 y += 16*2
                 x = 0
 
-        return (platforms,entities,A_count)
+        return (platforms,entities,count,enemies)

@@ -7,7 +7,7 @@ import lvl , listPlataforms
 from listPlataforms import *
 from lvl import *
 import menu
-
+from math import *
 #WIN_WIDTH = 800
 #WIN_HEIGHT = 640
 WIN_WIDTH = 507*2
@@ -21,138 +21,8 @@ DEPTH = 32
 FLAGS = 0
 #CAMERA_SLACK = 30
 
-spritesheet= pygame.image.load("media/graphics/Redmage.png")
-firesheet=pygame.image.load("media/graphics/fire.png")
-thundersheet=pygame.image.load("media/graphics/thunder.png")
-icesheet=pygame.image.load("media/graphics/ice.png")
-trans=pygame.image.load("media/graphics/trans.png")
-
-character = Surface((18,26),pygame.SRCALPHA)
-character.blit(spritesheet,(-835,-9))
-character = pygame.transform.scale(character, (18*3,26*2))
-standR = character
-
-character = Surface((18,26),pygame.SRCALPHA)
-character.blit(spritesheet,(-812,-9))
-character = pygame.transform.scale(character, (18*2,26*2))
-walkR1 = character
-
-character = Surface((18,26),pygame.SRCALPHA)
-character.blit(spritesheet,(-790,-9))
-character = pygame.transform.scale(character, (18*2,26*2))
-walkR2 = character
-
-character = Surface((17,25),pygame.SRCALPHA)
-character.blit(spritesheet,(-768,-9))
-character = pygame.transform.scale(character, (17*2,25*2))
-walkR3 = character
-
-character = Surface((17,25),pygame.SRCALPHA)
-character.blit(spritesheet,(-746,-9))
-character = pygame.transform.scale(character, (17*2,25*2))
-walkR4 = character
-
-character = Surface((18,27),pygame.SRCALPHA)
-character.blit(spritesheet,(-666,-8))
-character = pygame.transform.scale(character, (18*2,27*2))
-jumping = character
-
-character = Surface((18,24),pygame.SRCALPHA)
-character.blit(spritesheet,(-190,-12))
-character = pygame.transform.scale(character, (18*2,24*2))
-getdown = character
-
-character = Surface((20,25),pygame.SRCALPHA)
-character.blit(spritesheet,(-162,-83))
-character = pygame.transform.scale(character, (20*2,25*2))
-hands = character
-
-character = Surface((16,18),pygame.SRCALPHA)
-character.blit(spritesheet,(-296,-331))
-character = pygame.transform.scale(character, (16*2,18*2))
-sword = character
-
-character = Surface((18,26),pygame.SRCALPHA)
-character.blit(spritesheet,(-767,-9))
-character = pygame.transform.scale(character, (18*2,26*2))
-swordmove1 = character
-
-character = Surface((19,26),pygame.SRCALPHA)
-character.blit(spritesheet,(-743,-9))
-character = pygame.transform.scale(character, (19*2,26*2))
-swordmove2 = character
-
-character = Surface((5,9),pygame.SRCALPHA)
-character.blit(spritesheet,(-530,-339))
-character = pygame.transform.scale(character, (5*2,9*2))
-sword1 = character
-
-character = Surface((5,22),pygame.SRCALPHA)
-character.blit(spritesheet,(-541,-326))
-character = pygame.transform.scale(character, (5*2,22*2))
-sword2 = character
-
-character = Surface((9,22),pygame.SRCALPHA)
-character.blit(spritesheet,(-553,-326))
-character = pygame.transform.scale(character, (9*2,22*2))
-sword3 = character
-
-character = Surface((18,22),pygame.SRCALPHA)
-character.blit(spritesheet,(-564,-326))
-character = pygame.transform.scale(character, (18*2,22*2))
-sword4 = character
-
-character = Surface((29,29),pygame.SRCALPHA)
-character.blit(firesheet,(-93,-6))
-character = pygame.transform.scale(character, (29*2,29*2))
-fire1  = character
-
-character = Surface((29,29),pygame.SRCALPHA)
-character.blit(firesheet,(-126,-6))
-character = pygame.transform.scale(character, (29*2,29*2))
-fire2 = character
-
-character = Surface((29,29),pygame.SRCALPHA)
-character.blit(firesheet,(-162,-6))
-character = pygame.transform.scale(character, (29*2,29*2))
-fire3 = character
-
-character = Surface((14,15),pygame.SRCALPHA)
-character.blit(thundersheet,(-31,-14))
-character = pygame.transform.scale(character, (14*2,15*2))
-thunder1 = character
-
-character = Surface((21,21),pygame.SRCALPHA)
-character.blit(thundersheet,(-53,-11))
-character = pygame.transform.scale(character, (21*2,21*2))
-thunder2 = character
-
-character = Surface((42,34),pygame.SRCALPHA)
-character.blit(thundersheet,(-76,-3))
-character = pygame.transform.scale(character, (42*2,34*2))
-thunder3 = character
-
-character = Surface((37,40),pygame.SRCALPHA)
-character.blit(icesheet,(-136,0))
-character = pygame.transform.scale(character, (37*2,40*2))
-ice1 = character
-
-character = Surface((34,36),pygame.SRCALPHA)
-character.blit(icesheet,(-96,-3))
-character = pygame.transform.scale(character, (34*2,36*2))
-ice2 = character
-
-character = Surface((34,36),pygame.SRCALPHA)
-character.blit(icesheet,(-53,-3))
-character = pygame.transform.scale(character, (34*2,36*2))
-ice3 = character
 
 
-
- 
-pygame.mixer.init()
-sound_jump=pygame.mixer.Sound('media/sounds/jump.wav')
-sound_portal=pygame.mixer.Sound('media/sounds/portal.wav')
 
 
 
@@ -173,6 +43,7 @@ def main(aux):
     atack_counter=0
     nivel=aux
     shoots=[]
+    
 
     up = down = left = right  =atack = casting = False
     #bg= Surface((32,32))
@@ -183,13 +54,18 @@ def main(aux):
     
     player = Player(16*2, 16*2+690)
     
-    sw= Sword(16,16*2+690,player.rect,player.faceR)
+    sw= Element(16,16*2+690,player.rect,player.faceR)
     shoots.append(sw)
+
+    #test=Enemy(16*2+200, 16*2+650)
     
     level=lvl.level(nivel)
-    platforms=constructor(level,A_count)[0]
-    entities=constructor(level,A_count)[1]
-    A_count=constructor(level,A_count)[2]
+
+    dataLevel=constructor(level,A_count)
+    platforms=dataLevel[0]
+    entities=dataLevel[1]
+    salida=dataLevel[2]
+    enemies=dataLevel[3]
     # build thE lEvEl",]  
     
 
@@ -215,7 +91,7 @@ def main(aux):
             if e.type == KEYDOWN and e.key == K_RIGHT:
                 right = True
             if e.type == KEYDOWN and e.key == K_z:
-                new=Sword(16,16*2+690,player.rect,player.faceR)
+                new=Element(16,16*2+690,player.rect,player.faceR)
                 shoots.append(new)
             if e.type == KEYDOWN and e.key == K_x:
                 atack = True
@@ -254,10 +130,20 @@ def main(aux):
 
 
         # update player, draw everything else
-        player.update(up, down, left, right, casting,atack, platforms)
+        player.update(up, down, left, right, casting,atack, platforms,enemies)
         
+        #test.update(platforms,(16*2+180,16*2+270))
+        for e in enemies:
+
+            e.update(platforms,(e.now,e.now+100),shoots)
+            if e.die:
+                screen.blit(e.image, camera.apply(e))
+
+                enemies.remove(e)
+
         for e in shoots:
             e.update(platforms)
+
         
         if player.salida == True :
             pygame.time.wait(1)
@@ -267,9 +153,11 @@ def main(aux):
                 print("menuuuu")
             nivel+=1
             level=lvl.level(nivel)
-            platforms=constructor(level,A_count)[0]
-            entities=constructor(level,A_count)[1]
-            salida=constructor(level,A_count)[2]
+            dataLevel=constructor(level,A_count)
+            platforms=dataLevel[0]
+            entities=dataLevel[1]
+            salida=dataLevel[2]
+            enemies=dataLevel[3]
             player.salida=False
             # build thE lEvEl",]  
             
@@ -283,8 +171,10 @@ def main(aux):
             screen.blit(e.image, camera.apply(e))
         for e in shoots:
             screen.blit(e.image, camera.apply(e))
-        screen.blit(player.image, camera.apply(player))
+        for e in enemies:
+            screen.blit(e.image, camera.apply(e))
         
+        screen.blit(player.image, camera.apply(player))
 
         pygame.display.update()
         atack_counter+=1
@@ -350,54 +240,6 @@ class spell(Entity,tipo):
         self.image= surf
         self.image = pygame.transform.scale(self.image,(26*2 ,32*2) )
 '''
-class Sword(Entity):
-    def __init__(self, x, y,prect,face):
-        Entity.__init__(self)
-        self.faceR = True
-        self.image = fire1
-        self.counter= 0
-        self.rect = prect
-        self.xvel=3
-        self.rect = Rect(x, y, 32*2, 32*2)
-        self.rect.left=prect.left
-        self.rect.top =prect.top
-        self.image = pygame.transform.scale(self.image,(16*2 ,16*2) )
-        self.faceR= face
-
-    def update(self,platforms):
-        #x=prect
-        #self.rect.left+=prect.left
-        if self.faceR ==True:
-            self.rect.left += self.xvel
-        else : self.rect.left -= self.xvel
-        self.collide(self.xvel,platforms)
-        
-
-    def updatecharacter(self,surf):
-        if not self.faceR : surf = pygame.transform.flip(surf,True,False)
-        self.image= surf
-        self.image = pygame.transform.scale(self.image,(26*2 ,32*2) )
-    
-    def collide(self, xvel, platforms):
-            for p in platforms:
-                if pygame.sprite.collide_rect(self, p):
-                   
-                    if xvel > 0:
-                        self.rect.right = p.rect.left
-                        #self.xve=self.xvel
-                        self.xvel=0
-                        self.image = trans
-                        self.image = pygame.transform.scale(self.image,(16*2 ,16*2) )
-
-                        print "collide right"
-                    if xvel < 0:
-                        #self.x-=self.xvel
-                        
-                        self.rect.left = p.rect.right
-                        
-                        print "collide left"
-                        self.xvel=0
-                    
 
 
 class Player(Entity):
@@ -414,6 +256,9 @@ class Player(Entity):
         self.x=x
         self.y=y
         self.salida=False
+        self.vidas=3
+        self.lock=False
+        self.counter=0
         
 
         #self.image = Surface((32,32))
@@ -424,18 +269,19 @@ class Player(Entity):
         self.image = pygame.transform.scale(self.image,(26*2 ,32*2) )
         self.rect = Rect(x, y, 32*2, 32*2)
 
-    def update(self, up, down, left, right, casting, atack,platforms):
+    def update(self, up, down, left, right, casting, atack,platforms,enemies):
+        #if not self.lock:    
         if up:
-            # only jump if on the ground
+                # only jump if on the ground
 
             if self.onGround: 
                 self.yvel -= 10
-                #self.pos[1]-=10
+                    #self.pos[1]-=10
                 sound_jump.play()
         if down:
             self.down=True
         if casting:
-            
+                
             if self.onGround: self.power()
         if atack:
             self.atack=True   
@@ -448,9 +294,9 @@ class Player(Entity):
             self.xvel = 8
             self.x+=8
         if not self.onGround:
-            # only accelerate with gravity if in the air
+                # only accelerate with gravity if in the air
             self.yvel += 0.3
-            # max falling speed
+                # max falling speed
             if self.yvel > 100: self.yvel = 100
         if not(left or right):
             self.xvel = 0
@@ -463,15 +309,20 @@ class Player(Entity):
         # increment in x direction
         self.rect.left += self.xvel
         # do x-axis collisions
-        self.collide(self.xvel, 0, platforms)
+        self.collide(self.xvel, 0, platforms,enemies)
         # increment in y direction
         self.rect.top += self.yvel
         # assuming we're in the air
         self.onGround = False;
         # do y-axis collisions
-        self.collide(0, self.yvel, platforms)
+        self.collide(0, self.yvel, platforms,enemies)
 
         self.animate()
+        
+        #else:
+         #3#   self.counter+=1
+            #if self.counter == 2:
+             #   self.lock=False
         
 
     def power(self):
@@ -481,7 +332,7 @@ class Player(Entity):
 
         print("hola")
 
-    def collide(self, xvel, yvel, platforms):
+    def collide(self, xvel, yvel, platforms,enemies):
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
                 if isinstance(p, ExitBlock):
@@ -503,6 +354,18 @@ class Player(Entity):
                     self.yvel = 0
                 if yvel < 0:
                     self.rect.top = p.rect.bottom
+        for p in enemies:
+            if pygame.sprite.collide_rect(self, p):
+                
+                    
+                if self.vidas==0:
+                    print "muerto"
+                    menu.main() 
+                else : 
+                    self.vidas-=1 
+                    self.updatecharacter(getdown)
+
+                    self.rect.left-=100
 
     def animate(self):
 

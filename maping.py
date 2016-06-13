@@ -15,7 +15,7 @@ FLAGS = 0
 
 #Spritesheet
 
-spritesheet = pygame.image.load("media/graphics/ice.png")
+spritesheet = pygame.image.load("media/graphics/bombsheet.png")
 
 #Main Function
 
@@ -58,7 +58,7 @@ def main():
                 savedcode = "character = Surface((" + str(w) + "," + str(h) + "),pygame.SRCALPHA)" + "\n"
                 f.write(savedcode)
 
-                savedcode = "character.blit(spritesheet,(" + str(x) + "," + str(y) + "))" + "\n"
+                savedcode = "character.blit(bombsheet,(" + str(x) + "," + str(y) + "))" + "\n"
                 f.write(savedcode)
 
                 savedcode = "character = pygame.transform.scale(character, (" + str(w) + "*2," + str(h) + "*2))" + "\n"
