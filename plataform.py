@@ -7,6 +7,7 @@ import lvl , listPlataforms
 from listPlataforms import *
 from lvl import *
 import menu
+
 from math import *
 #WIN_WIDTH = 800
 #WIN_HEIGHT = 640
@@ -82,6 +83,8 @@ def main(aux):
             if e.type == QUIT: raise SystemExit, "QUIT"
             if e.type == KEYDOWN and e.key == K_ESCAPE:
                 raise SystemExit, "ESCAPE"
+            if e.type == KEYDOWN and e.key == K_SPACE:
+                menu.pausa(screen)
             if e.type == KEYDOWN and e.key == K_UP:
                 up = True
             if e.type == KEYDOWN and e.key == K_DOWN:

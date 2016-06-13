@@ -59,6 +59,55 @@ class Menu():
                 pygame.draw.circle(pantalla, self.fondo, pos, 5, 0)
             i+=1
 
+def pausa(pantalla):
+    pygame.mixer.music.pause()
+    pantalla1 = pantalla
+    pygame.display.set_caption("pause")
+    pantalla.blit(wallpaper,(0,0))
+    menu=Menu()
+    opciones=['controles', 'continuar', 'Salir']
+    menu.opciones=opciones
+    fin=False
+    reloj= pygame.time.Clock()
+
+    while not fin:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                fin = True
+                sys.exit(1)
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    print 'abajo'
+                    sound_option.play()
+                    menu.abajo()
+                if event.key == pygame.K_UP:
+                    print "arriba"
+                    sound_option.play()
+                    menu.arriba()
+                if event.key == pygame.K_RETURN:
+                    menu.seleccion=menu.nop
+                    sound_option.play()
+                    print 'seleccion'
+
+        print 'opcion: ', menu.nop
+
+        
+        if menu.seleccion==3:
+            menu.seleccion=0
+            fin=True
+            sys.exit(1)
+        elif menu.seleccion==1:
+            pygame.mixer.music.play()
+            fin=True
+        elif menu.seleccion==2:
+            pygame.mixer.music.play()
+            fin=True
+
+
+        reloj.tick(60)
+        menu.draw(pantalla)
+        pygame.display.flip()
 
 def main():
     """ Programa principal """
@@ -75,6 +124,7 @@ def main():
     menu.opciones=opciones
     fin=False
     reloj = pygame.time.Clock()
+
 
     while not fin:
         for event in pygame.event.get():
